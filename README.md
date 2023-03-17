@@ -1,4 +1,4 @@
 # Site directory
-Faust bozo= /Faustbozo.html
-<br>Subway surfers = /subway.html
-<br>FaustBozo polices = /Notes-about-faustbozo.html
+Faust bozo= /Faustbozo.html (Case sensitive)
+<br>Subway surfers = /Subway.html (Case sensitive)
+<br>FaustBozo polices = /Notes-about-faustbozo.html (Case sensitive)
