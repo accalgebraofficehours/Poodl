@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DNSINJECTOR923.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.16.0/p5.min.js"></script>
+</head>
+<body>
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var player = {
+      x: 100,
+      y: 100,
+      radius: 50,
+    };
+    var obstacles = [];
+    for (var i = 0; i < 10; i++) {
+      obstacles.push({
+        x: i * 100,
+        y: 300,
+        width: 100,
+        height: 50,
+      });
+    }
+    var background = {
+      color: "black",
+    };
+    var gameOver = false;
+    
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = background.color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "red";
+      ctx.fillCircle(player.x, player.y, player.radius);
+      for (var obstacle of obstacles) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+      }
+    }
+    
+    function onMouseMove(event) {
+      player.x = event.x;
+    }
+    
+    function onKeyDown(event) {
+      if (event.keyCode == 37) {
+        player.x -= 10;
+      } else if (event.keyCode == 39) {
+        player.x += 10;
+      }
+    }
+    
+    function checkCollisions() {
+      for (var obstacle of obstacles) {
+        if (player.x < obstacle.x + obstacle.width && player.x > obstacle.x && player.y < obstacle.y + obstacle.height && player.y > obstacle.y) {
+          gameOver = true;
+        }
+      }
+    }
+    
+    requestAnimationFrame(draw);
+    
+    addEventListener("mousemove", onMouseMove);
+    addEventListener("keydown", onKeyDown);
+    
+    function gameOver() {
+      document.body.innerHTML = "Game Over!";
+    }
+  </script>
+</body>
+</html>
