@@ -21,6 +21,7 @@
         let playerX = canvas.width / 2 - playerWidth / 2;
         let playerY = canvas.height - playerHeight;
         const playerSpeed = 5;
+        let isJumping = false;
 
         // Set up the platform
         const platformWidth = 200;
@@ -35,74 +36,94 @@
         let coinX = Math.random() * (canvas.width - coinWidth);
         let coinY = Math.random() * (canvas.height - coinHeight);
 
-        // Handle player movement
-        function handleMovement(event) {
-            if (event.key === "ArrowLeft" && playerX > 0) {
-                playerX -= playerSpeed;
-            }
-            if (event.key === "ArrowRight" && playerX < canvas.width - playerWidth) {
-                playerX += playerSpeed;
-            }
-        }
-
-        // Check for collision between player and platform
+        // Check collision between player and platform
         function checkCollision() {
             if (
                 playerY + playerHeight >= platformY &&
+                playerY + playerHeight <= platformY + platformHeight &&
                 playerX + playerWidth >= platformX &&
                 playerX <= platformX + platformWidth
             ) {
                 playerY = platformY - playerHeight;
+                isJumping = false;
             }
         }
 
-        // Check for collision between player and coin
+        // Check collision between player and coin
         function checkCoinCollision() {
             if (
-                playerX + playerWidth >= coinX &&
-                playerX <= coinX + coinWidth &&
                 playerY + playerHeight >= coinY &&
-                playerY <= coinY + coinHeight
+                playerY <= coinY + coinHeight &&
+                playerX + playerWidth >= coinX &&
+                playerX <= coinX + coinWidth
             ) {
                 coinX = Math.random() * (canvas.width - coinWidth);
                 coinY = Math.random() * (canvas.height - coinHeight);
             }
         }
 
+        // Handle player movement
+        function handleMovement(event) {
+            if (event.key === "ArrowLeft" && playerX > 0) {
+                playerX -= playerSpeed;
+            } else if (event.key === "ArrowRight" && playerX + playerWidth < canvas.width) {
+                playerX += playerSpeed;
+            } else if (event.key === "ArrowUp" && !isJumping) {
+                isJumping = true;
+                jump();
+            }
+        }
+
+        // Player jump
+        function jump() {
+            let jumpCount = 0;
+            const jumpInterval = setInterval(() => {
+                if (jumpCount >= 20) {
+                    clearInterval(jumpInterval);
+                    isJumping = false;
+                } else {
+                    playerY -= 5;
+                    jumpCount++;
+                }
+            }, 10);
+        }
+
         // Update game state
         function update() {
-            // Update platform position
+            // Update player position
+            checkCollision();
+            checkCoinCollision();
+
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw player
+            context.fillStyle = "blue";
+            context.fillRect(playerX, playerY, playerWidth, playerHeight);
+
+            // Draw platform
+            context.fillStyle = "green";
+            context.fillRect(platformX, platformY, platformWidth, platformHeight);
+
+            // Draw coin
+            context.fillStyle = "yellow";
+            context.fillRect(coinX, coinY, coinWidth, coinHeight);
+
+            // Move platform
             platformX += platformSpeed;
             if (platformX <= 0 || platformX >= canvas.width - platformWidth) {
                 platformSpeed *= -1;
             }
 
-            // Check for collisions
-            checkCollision();
-            checkCoinCollision();
-
-            // Clear the canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the player
-            context.fillStyle = "white";
-            context.fillRect(playerX, playerY, playerWidth, playerHeight);
-
-            // Draw the platform
-            context.fillRect(platformX, platformY, platformWidth, platformHeight);
-
-            // Draw the coin
-            context.fillRect(coinX, coinY, coinWidth, coinHeight);
-
-            // Request animation frame
+            // Request next frame
             requestAnimationFrame(update);
         }
 
         // Start the game
         update();
 
-        // Add event listener for player movement
-        window.addEventListener("keydown", handleMovement);
+        // Listen for player movement
+        document.addEventListener("keydown", handleMovement);
     </script>
 </body>
 </html>
