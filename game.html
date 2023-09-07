@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Platformer Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        // Set up the game canvas
+        const canvas = document.getElementById("gameCanvas");
+        const context = canvas.getContext("2d");
+
+        // Set up the player
+        const playerWidth = 50;
+        const playerHeight = 50;
+        let playerX = canvas.width / 2 - playerWidth / 2;
+        let playerY = canvas.height - playerHeight;
+        const playerSpeed = 5;
+
+        // Set up the platform
+        const platformWidth = 200;
+        const platformHeight = 20;
+        let platformX = canvas.width / 2 - platformWidth / 2;
+        let platformY = canvas.height - 2 * platformHeight;
+        let platformSpeed = 2;
+
+        // Set up the coin
+        const coinWidth = 20;
+        const coinHeight = 20;
+        let coinX = Math.random() * (canvas.width - coinWidth);
+        let coinY = Math.random() * (canvas.height - coinHeight);
+
+        // Handle player movement
+        function handleMovement(event) {
+            if (event.key === "ArrowLeft" && playerX > 0) {
+                playerX -= playerSpeed;
+            }
+            if (event.key === "ArrowRight" && playerX < canvas.width - playerWidth) {
+                playerX += playerSpeed;
+            }
+        }
+
+        // Check for collision between player and platform
+        function checkCollision() {
+            if (
+                playerY + playerHeight >= platformY &&
+                playerX + playerWidth >= platformX &&
+                playerX <= platformX + platformWidth
+            ) {
+                playerY = platformY - playerHeight;
+            }
+        }
+
+        // Check for collision between player and coin
+        function checkCoinCollision() {
+            if (
+                playerX + playerWidth >= coinX &&
+                playerX <= coinX + coinWidth &&
+                playerY + playerHeight >= coinY &&
+                playerY <= coinY + coinHeight
+            ) {
+                coinX = Math.random() * (canvas.width - coinWidth);
+                coinY = Math.random() * (canvas.height - coinHeight);
+            }
+        }
+
+        // Update game state
+        function update() {
+            // Update platform position
+            platformX += platformSpeed;
+            if (platformX <= 0 || platformX >= canvas.width - platformWidth) {
+                platformSpeed *= -1;
+            }
+
+            // Check for collisions
+            checkCollision();
+            checkCoinCollision();
+
+            // Clear the canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the player
+            context.fillStyle = "white";
+            context.fillRect(playerX, playerY, playerWidth, playerHeight);
+
+            // Draw the platform
+            context.fillRect(platformX, platformY, platformWidth, platformHeight);
+
+            // Draw the coin
+            context.fillRect(coinX, coinY, coinWidth, coinHeight);
+
+            // Request animation frame
+            requestAnimationFrame(update);
+        }
+
+        // Start the game
+        update();
+
+        // Add event listener for player movement
+        window.addEventListener("keydown", handleMovement);
+    </script>
+</body>
+</html>
