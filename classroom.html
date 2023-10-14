@@ -5,8 +5,8 @@
 </head>
 <body>
     <h1>URL Cloaker</h1>
-    <p>Enter the URL you want to cloak (or search query):</p>
-    <input type="text" id="urlInput" placeholder="Enter URL or search query here" required>
+    <p>Enter the URL you want to cloak:</p>
+    <input type="text" id="urlInput" placeholder="Enter URL here" required>
     
     <p>Enter the title for the cloaked page:</p>
     <input type="text" id="titleInput" placeholder="Enter title here" required>
@@ -18,14 +18,13 @@
 
     <script>
         document.getElementById("cloakButton").addEventListener("click", function() {
-            var input = document.getElementById("urlInput").value;
+            var urlToCloak = document.getElementById("urlInput").value;
             var pageTitle = document.getElementById("titleInput").value;
             var faviconURL = document.getElementById("faviconInput").value;
 
             // Check if it's a valid URL or a search query
-            if (isValidURL(input) || isValidSearchQuery(input)) {
-                var urlToOpen = isValidURL(input) ? input : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-                cloakURL(urlToOpen, pageTitle, faviconURL);
+            if (isValidURL(urlToCloak) || isValidSearchQuery(urlToCloak)) {
+                cloakURL(urlToCloak, pageTitle, faviconURL);
             } else {
                 alert("You forgot something...");
             }
