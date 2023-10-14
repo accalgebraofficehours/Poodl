@@ -6,9 +6,9 @@
 <body>
     <h1>URL Cloaker</h1>
     <p>Enter the URL you want to cloak:</p>
-    <input type="text" id="urlInput" placeholder="Enter URL here">
+    <input type="url" id="urlInput" placeholder="Enter URL here" required>
     
-    <p>Enter the title for the cloaked page (required):</p>
+    <p>Enter the title for the cloaked page:</p>
     <input type="text" id="titleInput" placeholder="Enter title here" required>
     
     <p>Enter the URL for the favicon (optional):</p>
@@ -26,7 +26,7 @@
             if (isValidURL(urlToCloak) && pageTitle) {
                 cloakURL(urlToCloak, pageTitle, faviconURL);
             } else {
-                alert("Please enter a valid URL (e.g., https://example.com) and provide a title.");
+                alert("You forgot something...");
             }
         });
 
