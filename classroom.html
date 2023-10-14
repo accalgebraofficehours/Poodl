@@ -7,28 +7,47 @@
     <h1>URL Cloaker</h1>
     <p>Enter the URL you want to cloak:</p>
     <input type="text" id="urlInput" placeholder="Enter URL here">
+    
+    <p>Enter the title for the cloaked page (required):</p>
+    <input type="text" id="titleInput" placeholder="Enter title here" required>
+    
+    <p>Enter the URL for the favicon (optional):</p>
+    <input type="text" id="faviconInput" placeholder="Enter favicon URL here">
+    
     <button id="cloakButton">Cloak URL</button>
 
     <script>
         document.getElementById("cloakButton").addEventListener("click", function() {
             var urlToCloak = document.getElementById("urlInput").value;
+            var pageTitle = document.getElementById("titleInput").value;
+            var faviconURL = document.getElementById("faviconInput").value;
 
             // Check if a valid URL is entered
-            if (isValidURL(urlToCloak)) {
-                cloakURL(urlToCloak);
+            if (isValidURL(urlToCloak) && pageTitle) {
+                cloakURL(urlToCloak, pageTitle, faviconURL);
             } else {
-                alert("Please enter a valid URL (e.g., https://example.com)");
+                alert("Please enter a valid URL (e.g., https://example.com) and provide a title.");
             }
         });
 
-        function cloakURL(url) {
+        function cloakURL(url, title, favicon) {
             try {
                 var iframe = document.createElement("iframe");
                 iframe.style.cssText = "height: 100%; width: 100%; border: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; border: none";
                 iframe.sandbox = "allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation";
                 iframe.src = url;
 
-                var page = window.open('https://Classroom.google.com');
+                var page = window.open('about:blank');
+                page.document.title = title;
+
+                if (favicon) {
+                    var link = document.createElement('link');
+                    link.rel = 'icon';
+                    link.type = 'image/x-icon';
+                    link.href = favicon;
+                    page.document.head.appendChild(link);
+                }
+
                 page.document.body.innerHTML = "";
                 page.document.body.appendChild(iframe);
 
@@ -40,13 +59,12 @@
         }
 
         function isValidURL(string) {
-            var pattern = new RegExp('^(https?:\\/\\/)?'+ // Protocol
-                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // Domain name
-                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR IPv4
-                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // Port and Path
-                '(\\?[;&a-z\\d%_.~+=-]*)?' + // Query string
-                '(\\#[-a-z\\d_]*)?$', 'i'); // Fragment locator
-            return !!pattern.test(string);
+            try {
+                new URL(string);
+                return true;
+            } catch (error) {
+                return false;
+            }
         }
     </script>
 </body>
